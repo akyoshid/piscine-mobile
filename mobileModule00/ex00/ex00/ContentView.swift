@@ -10,8 +10,8 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Text("Hello, world!")
-            Button("Click") {
+            Text("A simple text")
+            Button("Click me") {
                 print("Button pressed")
             }
             .buttonStyle(.glassProminent)
