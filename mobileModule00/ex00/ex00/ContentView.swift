@@ -13,9 +13,9 @@ struct ContentView: View {
             Text("Hello, world!")
             Button("Click") {
                 print("Button pressed")
-            } .buttonStyle(.glassProminent)
+            }
+            .buttonStyle(.glassProminent)
         }
-        .padding()
     }
 }
 
