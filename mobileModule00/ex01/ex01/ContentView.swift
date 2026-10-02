@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  ex01
+//  ex00
 //
-//  Created by Akihiro Yoshida on 2026/10/03.
+//  Created by Akihiro Yoshida on 2026/10/02.
 //
 
 import SwiftUI
@@ -10,12 +10,12 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
             Text("Hello, world!")
+            Button("Click") {
+                print("Button pressed")
+            }
+            .buttonStyle(.glassProminent)
         }
-        .padding()
     }
 }
 
