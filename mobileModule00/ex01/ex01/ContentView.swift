@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  ex00
+//  ex01
 //
-//  Created by Akihiro Yoshida on 2026/10/02.
+//  Created by Akihiro Yoshida on 2026/10/03.
 //
 
 import SwiftUI
