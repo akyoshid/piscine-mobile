@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var sayingHello = false
+    
     var body: some View {
         VStack {
-            Text("A simple text")
+            Text(sayingHello ? "Hello World!" : "A simple text")
             Button("Click me") {
                 print("Button pressed")
+                sayingHello.toggle()
             }
             .buttonStyle(.glassProminent)
         }
