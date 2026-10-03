@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct CalculatorDisplay: View {
-    let expression = "2,222,222+2,222,222"
-    let result = "4,444,444"
+    let expression = "0"
+    let result = "0"
     let isWide: Bool
 
     var body: some View {
