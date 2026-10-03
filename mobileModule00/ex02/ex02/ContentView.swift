@@ -234,6 +234,7 @@ struct ContentView: View {
                 .padding(isWide ? [.bottom, .horizontal] : .all, 20)
             }
             .navigationTitle("Calculator")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
