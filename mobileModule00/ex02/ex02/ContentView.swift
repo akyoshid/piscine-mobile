@@ -171,7 +171,9 @@ struct CalculatorButton: View {
     let isWide: Bool
 
     var body: some View {
-        Button(action: {}) {
+        Button() {
+            print("button pressed: \(key.label)")
+        } label: {
             if key == .del {
                 Image(systemName: "delete.backward")
             } else {
