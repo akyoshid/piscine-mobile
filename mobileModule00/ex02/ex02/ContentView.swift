@@ -117,8 +117,8 @@ enum CalculatorKey: CaseIterable {
     ]
     static let landscapeRows: [[CalculatorKey]] = [
         [.seven, .eight, .nine, .del, .divide],
-        [.four, .five, .six, .allClear, .multiply],
-        [.one, .two, .three, .clear, .minus],
+        [.four, .five, .six, .clear, .multiply],
+        [.one, .two, .three, .allClear, .minus],
         [.doubleZero, .zero, .dot, .equal, .plus],
     ]
 }
