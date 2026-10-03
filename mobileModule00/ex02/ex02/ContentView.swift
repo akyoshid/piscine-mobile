@@ -30,7 +30,7 @@ struct CalculatorDisplay: View {
         .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
         .defaultScrollAnchor(.trailing)
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.bottom, isWide ? 0 : 20) // should check this size when isWide is true
+        .padding(.bottom, isWide ? 10 : 20)
     }
 }
 
@@ -125,6 +125,7 @@ enum CalculatorKey: CaseIterable {
 
 struct CalculatorKeyStyle: ButtonStyle {
     var key: CalculatorKey
+    let isWide: Bool
     
     var foreground: Color {
         if key.isOperator() {
@@ -144,24 +145,31 @@ struct CalculatorKeyStyle: ButtonStyle {
         }
     }
     
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 36, weight: .regular))
-            .foregroundStyle(foreground)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .aspectRatio(1, contentMode: .fit)
-//            .contentShape(Circle())
-            .glassEffect(glass, in: .circle)
+    var shape: AnyShape {
+        isWide ? AnyShape(Capsule()) : AnyShape(Circle())
     }
     
-    init(_ key: CalculatorKey) {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: isWide ? 28 : 36, weight: .regular))
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+            .foregroundStyle(foreground)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(shape)
+            .glassEffect(glass, in: shape)
+    }
+
+    init(_ key: CalculatorKey, isWide: Bool) {
         self.key = key
+        self.isWide = isWide
     }
 }
 
 struct CalculatorButton: View {
     let key: CalculatorKey
-    
+    let isWide: Bool
+
     var body: some View {
         Button(action: {}) {
             if key == .del {
@@ -170,41 +178,42 @@ struct CalculatorButton: View {
                 Text(key.label)
             }
         }
-        .buttonStyle(CalculatorKeyStyle(key))
+        .buttonStyle(CalculatorKeyStyle(key, isWide: isWide))
     }
-    
-    init(_ key: CalculatorKey) {
+
+    init(_ key: CalculatorKey, isWide: Bool) {
         self.key = key
+        self.isWide = isWide
     }
 }
 
 struct CalculatorKeypad: View {
     let isWide: Bool
-    
-    var rows: [[CalculatorKey]]{
+
+    var rows: [[CalculatorKey]] {
+        isWide ? CalculatorKey.landscapeRows : CalculatorKey.portraitRows
+    }
+
+    var body: some View {
         if isWide {
-            CalculatorKey.landscapeRows
+            keypad
         } else {
-            CalculatorKey.portraitRows
+            keypad.aspectRatio(4.0 / 5.0, contentMode: .fit)
         }
     }
-    
-    var body: some View {
+
+    private var keypad: some View {
         GlassEffectContainer {
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                 ForEach(rows, id: \.self) { row in
                     GridRow {
                         ForEach(row, id: \.self) {
-                            CalculatorButton($0)
+                            CalculatorButton($0, isWide: isWide)
                         }
                     }
                 }
             }
         }
-        .aspectRatio(
-            isWide ? nil : 4 / 5,
-            contentMode: .fit
-        )
     }
 }
 
