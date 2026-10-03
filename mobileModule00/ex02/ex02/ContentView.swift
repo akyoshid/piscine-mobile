@@ -10,17 +10,18 @@ import SwiftUI
 struct CalculatorDisplay: View {
     let expression = "2,222,222+2,222,222"
     let result = "4,444,444"
+    let isWide: Bool
 
     var body: some View {
-        VStack(alignment: .trailing) {
+        VStack(alignment: .trailing, spacing: isWide ? 0: 8) {
             ScrollView(.horizontal) {
                 Text(expression)
-                    .font(.system(size: 28, weight: .regular))
+                    .font(.system(size: isWide ? 18 : 28, weight: .regular))
                     .foregroundStyle(.secondary)
             }
             ScrollView(.horizontal) {
                 Text(result)
-                    .font(.system(size: 56, weight: .regular))
+                    .font(.system(size: isWide ? 40 : 56, weight: .regular))
                     .foregroundStyle(.primary)
                     .textSelection(.enabled)
             }
@@ -29,7 +30,7 @@ struct CalculatorDisplay: View {
         .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
         .defaultScrollAnchor(.trailing)
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.vertical, 20)
+        .padding(.bottom, isWide ? 0 : 20) // should check this size when isWide is true
     }
 }
 
@@ -106,6 +107,20 @@ enum CalculatorKey: CaseIterable {
             return false
         }
     }
+    
+    static let portraitRows: [[CalculatorKey]] = [
+        [.del, .clear, .allClear, .divide],
+        [.seven, .eight, .nine, .multiply],
+        [.four, .five, .six, .minus],
+        [.one, .two, .three, .plus],
+        [.doubleZero, .zero, .dot, .equal],
+    ]
+    static let landscapeRows: [[CalculatorKey]] = [
+        [.seven, .eight, .nine, .del, .divide],
+        [.four, .five, .six, .allClear, .multiply],
+        [.one, .two, .three, .clear, .minus],
+        [.doubleZero, .zero, .dot, .equal, .plus],
+    ]
 }
 
 struct CalculatorKeyStyle: ButtonStyle {
@@ -134,8 +149,8 @@ struct CalculatorKeyStyle: ButtonStyle {
             .font(.system(size: 36, weight: .regular))
             .foregroundStyle(foreground)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .aspectRatio(1, contentMode: .fit)
-            .contentShape(Circle())
+//            .aspectRatio(1, contentMode: .fit)
+//            .contentShape(Circle())
             .glassEffect(glass, in: .circle)
     }
     
@@ -164,53 +179,49 @@ struct CalculatorButton: View {
 }
 
 struct CalculatorKeypad: View {
+    let isWide: Bool
+    
+    var rows: [[CalculatorKey]]{
+        if isWide {
+            CalculatorKey.landscapeRows
+        } else {
+            CalculatorKey.portraitRows
+        }
+    }
+    
     var body: some View {
         GlassEffectContainer {
-            VStack(spacing: 10) {
-                HStack(spacing: 10) {
-                    CalculatorButton(.del)
-                    CalculatorButton(.clear)
-                    CalculatorButton(.allClear)
-                    CalculatorButton(.divide)
-                }
-                HStack(spacing: 10) {
-                    CalculatorButton(.seven)
-                    CalculatorButton(.eight)
-                    CalculatorButton(.nine)
-                    CalculatorButton(.multiply)
-                }
-                HStack(spacing: 10) {
-                    CalculatorButton(.four)
-                    CalculatorButton(.five)
-                    CalculatorButton(.six)
-                    CalculatorButton(.minus)
-                }
-                HStack(spacing: 10) {
-                    CalculatorButton(.one)
-                    CalculatorButton(.two)
-                    CalculatorButton(.three)
-                    CalculatorButton(.plus)
-                }
-                HStack(spacing: 10) {
-                    CalculatorButton(.doubleZero)
-                    CalculatorButton(.zero)
-                    CalculatorButton(.dot)
-                    CalculatorButton(.equal)
+            Grid(horizontalSpacing: 10, verticalSpacing: 10) {
+                ForEach(rows, id: \.self) { row in
+                    GridRow {
+                        ForEach(row, id: \.self) {
+                            CalculatorButton($0)
+                        }
+                    }
                 }
             }
         }
+        .aspectRatio(
+            isWide ? nil : 4 / 5,
+            contentMode: .fit
+        )
     }
 }
 
 struct ContentView: View {
     var body: some View {
         NavigationStack {
-            VStack {
-                Spacer()
-                CalculatorDisplay()
-                CalculatorKeypad()
+            GeometryReader { geo in
+                let isWide = geo.size.width > geo.size.height
+                VStack(spacing: 0) {
+                    if !isWide {
+                        Spacer(minLength: 0)
+                    }
+                    CalculatorDisplay(isWide: isWide)
+                    CalculatorKeypad(isWide: isWide)
+                }
+                .padding(isWide ? [.bottom, .horizontal] : .all, 20)
             }
-            .padding(20)
             .navigationTitle("Calculator")
         }
     }
