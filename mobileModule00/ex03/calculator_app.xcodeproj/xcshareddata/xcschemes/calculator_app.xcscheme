@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1397FEA730700FFC00501DD6"
-               BuildableName = "ex03.app"
-               BlueprintName = "ex03"
-               ReferencedContainer = "container:ex03.xcodeproj">
+               BuildableName = "calculator_app.app"
+               BlueprintName = "calculator_app"
+               ReferencedContainer = "container:calculator_app.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1397FEA730700FFC00501DD6"
-            BuildableName = "ex03.app"
-            BlueprintName = "ex03"
-            ReferencedContainer = "container:ex03.xcodeproj">
+            BuildableName = "calculator_app.app"
+            BlueprintName = "calculator_app"
+            ReferencedContainer = "container:calculator_app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1397FEA730700FFC00501DD6"
-            BuildableName = "ex03.app"
-            BlueprintName = "ex03"
-            ReferencedContainer = "container:ex03.xcodeproj">
+            BuildableName = "calculator_app.app"
+            BlueprintName = "calculator_app"
+            ReferencedContainer = "container:calculator_app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

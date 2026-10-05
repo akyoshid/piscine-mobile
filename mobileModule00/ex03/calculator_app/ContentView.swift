@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  ex03
+//  calculator_app
 //
 //  Created by Akihiro Yoshida on 2026/10/03.
 //
