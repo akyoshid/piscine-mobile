@@ -154,7 +154,7 @@ struct CalculatorEngineDisplayTests {
     }
 
     @Test func errorMessages() {
-        #expect(engine(after: "5/0=").mainLine == "Division by zero")
+        #expect(engine(after: "5/0=").mainLine == "Undefined")
         #expect(engine(after: "5/0=").subLine == "5÷0")
         let overflow = "999999999999999" + String(repeating: "*999999999999999", count: 11) + "="
         #expect(engine(after: overflow).mainLine == "Overflow")
@@ -292,7 +292,7 @@ struct CalculatorEngineTransitionTests {
         #expect(engine(after: "5/0=7").mainLine == "7")
         #expect(engine(after: "5/0=+").mainLine == "0+")
         #expect(engine(after: "5/0=-").mainLine == "−")
-        #expect(engine(after: "5/0==").mainLine == "Division by zero")
+        #expect(engine(after: "5/0==").mainLine == "Undefined")
     }
 }
 
