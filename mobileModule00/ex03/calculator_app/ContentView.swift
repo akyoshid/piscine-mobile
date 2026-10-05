@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct CalculatorDisplay: View {
-    let expression = "0"
-    let result = "0"
+    let mainLine: String
+    let subLine: String
     let isWide: Bool
 
     var body: some View {
         VStack(alignment: .trailing, spacing: isWide ? 0: 8) {
             ScrollView(.horizontal) {
-                Text(expression)
+                // A space keeps the line's height while it is empty
+                Text(subLine.isEmpty ? " " : subLine)
                     .font(.system(size: isWide ? 18 : 28, weight: .regular))
                     .foregroundStyle(.secondary)
             }
             ScrollView(.horizontal) {
-                Text(result)
+                Text(mainLine)
                     .font(.system(size: isWide ? 40 : 56, weight: .regular))
                     .foregroundStyle(.primary)
                     .textSelection(.enabled)
@@ -32,95 +33,6 @@ struct CalculatorDisplay: View {
         .frame(maxWidth: .infinity, alignment: .trailing)
         .padding(.bottom, isWide ? 10 : 20)
     }
-}
-
-enum CalculatorKey: CaseIterable {
-    case doubleZero, zero, one, two, three, four, five, six, seven, eight, nine
-    case dot
-    case equal, plus, minus, multiply, divide
-    case del, clear, allClear
-    
-    var value: Int? {
-        switch self {
-        case .zero: return 0
-        case .one: return 1
-        case .two: return 2
-        case .three: return 3
-        case .four: return 4
-        case .five: return 5
-        case .six: return 6
-        case .seven: return 7
-        case .eight: return 8
-        case .nine: return 9
-        default: return nil
-        }
-    }
-    
-    var label: String {
-        switch self {
-        case .doubleZero: return "00"
-        case .zero: return "0"
-        case .one: return "1"
-        case .two: return "2"
-        case .three: return "3"
-        case .four: return "4"
-        case .five: return "5"
-        case .six: return "6"
-        case .seven: return "7"
-        case .eight: return "8"
-        case .nine: return "9"
-        case .dot: return "."
-        case .equal: return "="
-        case .plus: return "+"
-        case .minus: return "−"
-        case .multiply: return "×"
-        case .divide: return "÷"
-        case .del: return "DEL"
-        case .clear: return "C"
-        case .allClear: return "AC"
-        }
-    }
-    
-    func isNumeric() -> Bool {
-        switch self {
-        case .doubleZero, .zero, .one, .two, .three, .four, .five, .six, .seven, .eight, .nine:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    func isOperator() -> Bool {
-        switch self {
-        case .equal, .plus, .minus, .multiply, .divide:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    func isDelete() -> Bool {
-        switch self {
-        case .del, .clear, .allClear:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    static let portraitRows: [[CalculatorKey]] = [
-        [.del, .clear, .allClear, .divide],
-        [.seven, .eight, .nine, .multiply],
-        [.four, .five, .six, .minus],
-        [.one, .two, .three, .plus],
-        [.doubleZero, .zero, .dot, .equal],
-    ]
-    static let landscapeRows: [[CalculatorKey]] = [
-        [.seven, .eight, .nine, .del, .divide],
-        [.four, .five, .six, .clear, .multiply],
-        [.one, .two, .three, .allClear, .minus],
-        [.doubleZero, .zero, .dot, .equal, .plus],
-    ]
 }
 
 struct CalculatorKeyStyle: ButtonStyle {
@@ -169,10 +81,12 @@ struct CalculatorKeyStyle: ButtonStyle {
 struct CalculatorButton: View {
     let key: CalculatorKey
     let isWide: Bool
+    let onPress: (CalculatorKey) -> Void
 
     var body: some View {
         Button() {
             print("button pressed: \(key.label)")
+            onPress(key)
         } label: {
             if key == .del {
                 Image(systemName: "delete.backward")
@@ -183,14 +97,16 @@ struct CalculatorButton: View {
         .buttonStyle(CalculatorKeyStyle(key, isWide: isWide))
     }
 
-    init(_ key: CalculatorKey, isWide: Bool) {
+    init(_ key: CalculatorKey, isWide: Bool, onPress: @escaping (CalculatorKey) -> Void) {
         self.key = key
         self.isWide = isWide
+        self.onPress = onPress
     }
 }
 
 struct CalculatorKeypad: View {
     let isWide: Bool
+    let onPress: (CalculatorKey) -> Void
 
     var rows: [[CalculatorKey]] {
         isWide ? CalculatorKey.landscapeRows : CalculatorKey.portraitRows
@@ -210,7 +126,7 @@ struct CalculatorKeypad: View {
                 ForEach(rows, id: \.self) { row in
                     GridRow {
                         ForEach(row, id: \.self) {
-                            CalculatorButton($0, isWide: isWide)
+                            CalculatorButton($0, isWide: isWide, onPress: onPress)
                         }
                     }
                 }
@@ -220,6 +136,8 @@ struct CalculatorKeypad: View {
 }
 
 struct ContentView: View {
+    @State private var engine = CalculatorEngine()
+
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -228,8 +146,12 @@ struct ContentView: View {
                     if !isWide {
                         Spacer(minLength: 0)
                     }
-                    CalculatorDisplay(isWide: isWide)
-                    CalculatorKeypad(isWide: isWide)
+                    CalculatorDisplay(
+                        mainLine: engine.mainLine,
+                        subLine: engine.subLine,
+                        isWide: isWide
+                    )
+                    CalculatorKeypad(isWide: isWide) { engine.press($0) }
                 }
                 .padding(isWide ? [.bottom, .horizontal] : .all, 20)
             }
