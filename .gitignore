@@ -12,3 +12,5 @@ xcuserdata/
 .build/
 .swiftpm/
 
+*.pdf
+*.md
