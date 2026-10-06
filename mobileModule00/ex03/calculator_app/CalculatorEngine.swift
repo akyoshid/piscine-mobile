@@ -90,9 +90,7 @@ final class CalculatorEngine {
         case .editing:
             break
         case .showingResult(let value):
-            let carried = NumberToken(carrying: value, formatted: ResultFormatter.format(value))
-            tokens = [.number(carried)]
-            state = .editing
+            carryOver(value)
         case .error:
             allClear()
         }
@@ -154,8 +152,8 @@ final class CalculatorEngine {
         switch state {
         case .editing:
             break
-        case .showingResult:
-            return
+        case .showingResult(let value):
+            carryOver(value)
         case .error:
             return allClear()
         }
@@ -176,6 +174,13 @@ final class CalculatorEngine {
                 tokens[tokens.count - 1] = .number(number)
             }
         }
+    }
+
+    // Starts a new expression whose first number token is the displayed result
+    private func carryOver(_ value: Decimal) {
+        let carried = NumberToken(carrying: value, formatted: ResultFormatter.format(value))
+        tokens = [.number(carried)]
+        state = .editing
     }
 
     private func startNewExpressionIfNeeded() {

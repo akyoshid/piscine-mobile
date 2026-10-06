@@ -237,10 +237,28 @@ struct CalculatorEngineClearTests {
         #expect(engine(after: "5/0=C").tokens.isEmpty)
     }
 
-    @Test func deleteAfterResultDoesNothing() {
-        let engine = engine(after: "1+2=D")
-        #expect(engine.mainLine == "3")
-        #expect(engine.subLine == "1+2")
+    @Test(arguments: [
+        ("12+345=", "35"),
+        ("3-8=", "−"),
+        ("1/2=", "0."),
+        ("5-5=", "0"),
+        ("1/3=", "0.33333333333333"),
+        ("100000000000000*100000=", "0"),
+    ])
+    func deleteAfterResultCarriesOverAndDeletes(keys: String, expected: String) {
+        let engine = engine(after: keys + "D")
+        #expect(engine.state == .editing)
+        #expect(engine.mainLine == expected)
+        #expect(engine.subLine == "")
+    }
+
+    @Test func deleteAfterResultBeyondDigitLimit() {
+        let engine = engine(after: "1.23456789012345/1000000=")
+        #expect(engine.mainLine == "0.00000123456789012345")
+        press("D5", on: engine)
+        #expect(engine.mainLine == "0.0000012345678901234")
+        press("DDDDD5", on: engine)
+        #expect(engine.mainLine == "0.000001234567895")
     }
 
     @Test func deleteAfterErrorActsAsAllClear() {
